@@ -1,7 +1,5 @@
 from downloader.utils import *
 
-import time
-
 # import codecs
 
 from selenium import webdriver
@@ -15,7 +13,7 @@ if __name__ == "__main__":
 
     data = ""
 
-    while True:
+    while not data:
         for i in driver.get_log("browser"):
             if (
                 "message" in i
@@ -24,11 +22,6 @@ if __name__ == "__main__":
                 and ".m3u8" in i["message"]
             ):
                 data = i["message"]
-                break
-        else:
-            continue
-        # inner loop was broken
-        break
 
     driver.quit()
 
