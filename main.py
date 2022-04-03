@@ -1,8 +1,8 @@
-from downloader.constants import *
 from downloader.utils import *
 
 import time
-import codecs
+
+# import codecs
 
 from selenium import webdriver
 
@@ -11,20 +11,34 @@ if __name__ == "__main__":
     url = input("twitter broadcast url: ")
     driver = webdriver.Chrome()
     driver.get(url)
-    driver.execute_script(XHR_SCRIPT)
+    driver.execute_script(open("downloader/listener.js", "r").read())
 
-    time.sleep(TIMEOUT)
-    sniffed = driver.execute_script(GET_SNIFFED_VALUES)
+    data = ""
+
+    while True:
+        for i in driver.get_log("browser"):
+            if (
+                "message" in i
+                and "source" in i
+                and i["source"] == "console-api"
+                and ".m3u8" in i["message"]
+            ):
+                data = i["message"]
+                break
+        else:
+            continue
+        # inner loop was broken
+        break
+
     driver.quit()
 
     # file = codecs.open("temp", "w", "utf-8")
-    # file.write(sniffed)
+    # file.write(data)
     # file.close()
 
-    # sniffed = open("temp", "r", encoding="utf-8").read()
-    m3u8_url = extract_m3u8_url(sniffed)
+    # data = open("temp", "r", encoding="utf-8").read()
+    m3u8_url = extract_m3u8_url(data)
 
     download(m3u8_url)
     # remove_file("temp")
-
     print("Done!")

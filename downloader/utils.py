@@ -18,6 +18,7 @@ def remove_file(file: str) -> None:
 
 
 def extract_m3u8_url(text: str) -> str:
-    for response in text.split('"'):
-        if "master_dynamic_" in response:
-            return response
+    text = text.replace("\\", "")
+    for i in text.split('"'):
+        if ".m3u8" in i and ("playlist_" in i or "master_dynamic_" in i):
+            return i
